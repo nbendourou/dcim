@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DCIM Pro - Data Center Infrastructure Management</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fas fa-database"></i>
+                    <span class="logo-text">DCIM Pro</span>
+                </div>
+                <button class="sidebar-toggle" id="sidebarToggle">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <div class="nav-section-title">SUPERVISION</div>
+                <a href="#" class="nav-item active" data-page="dashboard">
+                    <i class="fas fa-th-large"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#" class="nav-item" data-page="tree">
+                    <i class="fas fa-sitemap"></i>
+                    <span>Arborescence</span>
+                </a>
+                
+                <div class="nav-section-title">INFRASTRUCTURE</div>
+                <a href="#" class="nav-item" data-page="salles">
+                    <i class="fas fa-building"></i>
+                    <span>Salles</span>
+                </a>
+                <a href="#" class="nav-item" data-page="racks">
+                    <i class="fas fa-server"></i>
+                    <span>Racks</span>
+                </a>
+                <a href="#" class="nav-item" data-page="equipements">
+                    <i class="fas fa-microchip"></i>
+                    <span>Équipements</span>
+                </a>
+                
+                <div class="nav-section-title">DISTRIBUTION ÉLECTRIQUE</div>
+                <a href="#" class="nav-item" data-page="canalis">
+                    <i class="fas fa-grip-lines"></i>
+                    <span>Canalis / Boîtiers AC</span>
+                </a>
+                <a href="#" class="nav-item" data-page="tableaux-dc">
+                    <i class="fas fa-car-battery"></i>
+                    <span>Tableaux DC</span>
+                </a>
+                <a href="#" class="nav-item" data-page="connexions">
+                    <i class="fas fa-plug"></i>
+                    <span>Connexions</span>
+                </a>
+                
+                <div class="nav-section-title">ANALYSE</div>
+                <a href="#" class="nav-item" data-page="capacite">
+                    <i class="fas fa-chart-pie"></i>
+                    <span>Capacité</span>
+                </a>
+                
+                <div class="nav-section-title">SYSTÈME</div>
+                <a href="#" class="nav-item" data-page="config">
+                    <i class="fas fa-cog"></i>
+                    <span>Configuration</span>
+                </a>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="connection-status" id="connectionStatus">
+                    <span class="status-dot"></span>
+                    <span class="status-text">Mode Démo</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <button class="mobile-menu-btn" id="mobileMenuBtn">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <div class="breadcrumb" id="breadcrumb">
+                        <span class="breadcrumb-item">DCIM</span>
+                        <i class="fas fa-chevron-right"></i>
+                        <span class="breadcrumb-item active" id="pageTitle">Dashboard</span>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <div class="search-global">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Rechercher rack, équipement..." id="globalSearch">
+                    </div>
+                    <button class="header-btn" id="refreshBtn" title="Actualiser">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                    <div class="last-sync">
+                        <small>Sync:</small>
+                        <span id="lastSync">--:--</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content -->
+            <div class="content" id="content">
+                
+                <!-- Dashboard Page -->
+                <div class="page active" id="page-dashboard">
+                    <div class="page-header">
+                        <h2>Vue d'ensemble du Datacenter</h2>
+                    </div>
+                    
+                    <!-- KPIs -->
+                    <div class="kpi-row">
+                        <div class="kpi-card">
+                            <div class="kpi-icon racks"><i class="fas fa-server"></i></div>
+                            <div class="kpi-data">
+                                <span class="kpi-value" id="kpi-racks">0</span>
+                                <span class="kpi-label">Racks</span>
+                            </div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-icon equip"><i class="fas fa-microchip"></i></div>
+                            <div class="kpi-data">
+                                <span class="kpi-value" id="kpi-equip">0</span>
+                                <span class="kpi-label">Équipements</span>
+                            </div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-icon power"><i class="fas fa-bolt"></i></div>
+                            <div class="kpi-data">
+                                <span class="kpi-value" id="kpi-power">0</span>
+                                <span class="kpi-label">kW Consommés</span>
+                            </div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-icon u-used"><i class="fas fa-layer-group"></i></div>
+                            <div class="kpi-data">
+                                <span class="kpi-value" id="kpi-u">0%</span>
+                                <span class="kpi-label">U Occupés</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Salles Overview -->
+                    <div class="section-title">
+                        <h3>Salles Informatiques</h3>
+                    </div>
+                    <div class="salles-grid" id="sallesGrid">
+                        <!-- Generated by JS -->
+                    </div>
+                    
+                    <!-- Recent Activity -->
+                    <div class="dashboard-row">
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h3>Racks les plus chargés</h3>
+                            </div>
+                            <div class="card-body">
+                                <div id="topRacksList"></div>
+                            </div>
+                        </div>
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <h3>Consommation par Voie</h3>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="powerChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tree Page (Arborescence) -->
+                <div class="page" id="page-tree">
+                    <div class="page-header">
+                        <h2>Arborescence Électrique</h2>
+                        <div class="page-actions">
+                            <select id="treeChainFilter">
+                                <option value="">Toutes les chaînes</option>
+                                <option value="A">Chaîne A</option>
+                                <option value="B">Chaîne B</option>
+                                <option value="C">Chaîne C</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="tree-container" id="treeContainer">
+                        <!-- Generated by JS -->
+                    </div>
+                </div>
+
+                <!-- Salles Page -->
+                <div class="page" id="page-salles">
+                    <div class="page-header">
+                        <h2>Gestion des Salles</h2>
+                        <div class="page-actions">
+                            <button class="btn btn-primary" onclick="openModal('salle')">
+                                <i class="fas fa-plus"></i> Nouvelle Salle
+                            </button>
+                        </div>
+                    </div>
+                    <div class="salle-detail" id="salleDetail">
+                        <!-- Salle floor plan -->
+                    </div>
+                </div>
+
+                <!-- Racks Page -->
+                <div class="page" id="page-racks">
+                    <div class="page-header">
+                        <h2>Gestion des Racks</h2>
+                        <div class="page-actions">
+                            <select id="rackSalleFilter">
+                                <option value="">Toutes les salles</option>
+                            </select>
+                            <select id="rackRangeeFilter">
+                                <option value="">Toutes les rangées</option>
+                            </select>
+                            <button class="btn btn-primary" onclick="openModal('rack')">
+                                <i class="fas fa-plus"></i> Nouveau Rack
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="racks-layout">
+                        <!-- Rack List -->
+                        <div class="racks-list" id="racksList">
+                            <!-- Generated by JS -->
+                        </div>
+                        
+                        <!-- Rack Detail View -->
+                        <div class="rack-detail-panel" id="rackDetailPanel">
+                            <div class="rack-detail-header">
+                                <h3 id="rackDetailTitle">Sélectionnez un rack</h3>
+                                <div class="rack-detail-actions">
+                                    <button class="btn btn-sm" onclick="editSelectedRack()"><i class="fas fa-edit"></i></button>
+                                    <button class="btn btn-sm btn-danger" onclick="deleteSelectedRack()"><i class="fas fa-trash"></i></button>
+                                </div>
+                            </div>
+                            <div class="rack-visual-container">
+                                <div class="rack-visual" id="rackVisual">
+                                    <!-- U slots generated by JS -->
+                                </div>
+                                <div class="rack-info" id="rackInfo">
+                                    <!-- Rack info -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Equipements Page -->
+                <div class="page" id="page-equipements">
+                    <div class="page-header">
+                        <h2>Gestion des Équipements</h2>
+                        <div class="page-actions">
+                            <input type="text" class="search-input" placeholder="Rechercher..." id="equipSearch">
+                            <select id="equipTypeFilter">
+                                <option value="">Tous les types</option>
+                                <option value="Serveur">Serveur</option>
+                                <option value="Switch">Switch</option>
+                                <option value="Routeur">Routeur</option>
+                                <option value="Storage">Storage</option>
+                            </select>
+                            <select id="equipAlimFilter">
+                                <option value="">Toutes alim.</option>
+                                <option value="AC">AC</option>
+                                <option value="DC">DC</option>
+                            </select>
+                            <button class="btn btn-primary" onclick="openModal('equipement')">
+                                <i class="fas fa-plus"></i> Nouvel Équipement
+                            </button>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table class="data-table" id="equipTable">
+                            <thead>
+                                <tr>
+                                    <th>Nom</th>
+                                    <th>Type</th>
+                                    <th>Alim.</th>
+                                    <th>Rack</th>
+                                    <th>Position</th>
+                                    <th>Puissance</th>
+                                    <th>Statut</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="equipTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Canalis / Boîtiers AC Page -->
+                <div class="page" id="page-canalis">
+                    <div class="page-header">
+                        <h2>Canalis & Boîtiers AC</h2>
+                        <div class="page-actions">
+                            <button class="btn btn-primary" onclick="openModal('boitier')">
+                                <i class="fas fa-plus"></i> Nouveau Boîtier
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="canalis-layout">
+                        <div class="canalis-tree" id="canalisTree">
+                            <!-- Canalis hierarchy -->
+                        </div>
+                        <div class="boitier-detail" id="boitierDetail">
+                            <!-- Boitier detail with connected equipment -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tableaux DC Page -->
+                <div class="page" id="page-tableaux-dc">
+                    <div class="page-header">
+                        <h2>Tableaux DC</h2>
+                        <div class="page-actions">
+                            <button class="btn btn-primary" onclick="openModal('tableauDC')">
+                                <i class="fas fa-plus"></i> Nouveau Tableau
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="tableaux-layout">
+                        <div class="tableaux-list" id="tableauxDCList">
+                            <!-- Tableaux DC list -->
+                        </div>
+                        <div class="tableau-detail" id="tableauDCDetail">
+                            <!-- Tableau detail with disjoncteurs -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Connexions Page -->
+                <div class="page" id="page-connexions">
+                    <div class="page-header">
+                        <h2>Connexions Électriques</h2>
+                        <div class="page-actions">
+                            <div class="tabs-inline">
+                                <button class="tab-btn active" data-tab="ac">Connexions AC</button>
+                                <button class="tab-btn" data-tab="dc">Connexions DC</button>
+                            </div>
+                            <button class="btn btn-primary" onclick="openModal('connexion')">
+                                <i class="fas fa-plus"></i> Nouvelle Connexion
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="connexions-content">
+                        <div class="tab-content active" id="tab-ac">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Équipement</th>
+                                        <th>Voie</th>
+                                        <th>Boîtier AC</th>
+                                        <th>Prise</th>
+                                        <th>Phase</th>
+                                        <th>Puissance</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="connexionsACBody"></tbody>
+                            </table>
+                        </div>
+                        <div class="tab-content" id="tab-dc">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Équipement</th>
+                                        <th>Voie</th>
+                                        <th>Tableau DC</th>
+                                        <th>Disjoncteur</th>
+                                        <th>Calibre</th>
+                                        <th>Puissance</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="connexionsDCBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Capacité Page -->
+                <div class="page" id="page-capacite">
+                    <div class="page-header">
+                        <h2>Analyse de Capacité</h2>
+                    </div>
+                    
+                    <div class="capacite-grid">
+                        <div class="capacite-card">
+                            <h3>Capacité U par Salle</h3>
+                            <canvas id="capaciteUChart"></canvas>
+                        </div>
+                        <div class="capacite-card">
+                            <h3>Puissance par Chaîne</h3>
+                            <canvas id="capacitePowerChart"></canvas>
+                        </div>
+                        <div class="capacite-card full">
+                            <h3>Disponibilité des Disjoncteurs</h3>
+                            <div id="disjoncteurStats"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Config Page -->
+                <div class="page" id="page-config">
+                    <div class="page-header">
+                        <h2>Configuration</h2>
+                    </div>
+                    
+                    <div class="config-grid">
+                        <div class="config-card" style="grid-column: span 2;">
+                            <div class="config-card-header">
+                                <i class="fas fa-link"></i>
+                                <h3>Connexion Google Sheets (Apps Script)</h3>
+                            </div>
+                            <div class="config-card-body">
+                                <div class="form-group">
+                                    <label>URL de l'API Apps Script</label>
+                                    <div style="display: flex; gap: 8px;">
+                                        <input type="text" id="apiUrl" placeholder="https://script.google.com/macros/s/AKfycb.../exec" style="flex: 1;">
+                                        <button class="btn" onclick="document.getElementById('apiUrl').select(); document.execCommand('copy'); toast('URL copiée!', 'success');" title="Copier">
+                                            <i class="fas fa-copy"></i>
+                                        </button>
+                                        <button class="btn" onclick="navigator.clipboard.readText().then(t => document.getElementById('apiUrl').value = t); toast('URL collée!', 'info');" title="Coller">
+                                            <i class="fas fa-paste"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div style="background: var(--bg-secondary); border-radius: 8px; padding: 16px; margin: 16px 0;">
+                                    <h4 style="margin-bottom: 12px; color: var(--accent);"><i class="fas fa-info-circle"></i> Comment obtenir l'URL ?</h4>
+                                    <ol style="margin-left: 20px; line-height: 1.8; color: var(--text-secondary);">
+                                        <li>Ouvrez votre Google Sheets</li>
+                                        <li>Menu <strong>Extensions</strong> → <strong>Apps Script</strong></li>
+                                        <li>Collez le code du fichier <code>Code.gs</code></li>
+                                        <li>Cliquez <strong>Déployer</strong> → <strong>Nouveau déploiement</strong></li>
+                                        <li>Type: <strong>Application Web</strong></li>
+                                        <li>Exécuter en tant que: <strong>Moi</strong></li>
+                                        <li>Qui peut accéder: <strong>Tout le monde</strong></li>
+                                        <li>Cliquez <strong>Déployer</strong></li>
+                                        <li><strong style="color: var(--success);">Copiez l'URL complète</strong> et collez-la ci-dessus</li>
+                                    </ol>
+                                </div>
+                                
+                                <div class="form-actions" style="justify-content: flex-start;">
+                                    <button class="btn" onclick="testConnection()">
+                                        <i class="fas fa-plug"></i> Tester la connexion
+                                    </button>
+                                    <button class="btn btn-primary" onclick="saveConfig()">
+                                        <i class="fas fa-save"></i> Sauvegarder
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="config-card">
+                            <div class="config-card-header">
+                                <i class="fas fa-database"></i>
+                                <h3>Données chargées</h3>
+                            </div>
+                            <div class="config-card-body">
+                                <div class="sync-status">
+                                    <div class="sync-item">
+                                        <span>Racks</span>
+                                        <span class="sync-count" id="sync-racks">0</span>
+                                    </div>
+                                    <div class="sync-item">
+                                        <span>Équipements</span>
+                                        <span class="sync-count" id="sync-equip">0</span>
+                                    </div>
+                                    <div class="sync-item">
+                                        <span>Boîtiers AC</span>
+                                        <span class="sync-count" id="sync-boitiers">0</span>
+                                    </div>
+                                    <div class="sync-item">
+                                        <span>Tableaux DC</span>
+                                        <span class="sync-count" id="sync-tableaux">0</span>
+                                    </div>
+                                </div>
+                                <button class="btn btn-primary full-width" onclick="syncAll()">
+                                    <i class="fas fa-sync"></i> Recharger les données
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="config-card">
+                            <div class="config-card-header">
+                                <i class="fas fa-question-circle"></i>
+                                <h3>Aide</h3>
+                            </div>
+                            <div class="config-card-body">
+                                <p style="color: var(--text-secondary); margin-bottom: 12px;">En cas de problème :</p>
+                                <ul style="margin-left: 20px; color: var(--text-secondary); line-height: 1.8;">
+                                    <li><strong>Erreur connexion</strong> : Vérifiez que l'URL commence par <code>https://script.google.com/macros/s/</code></li>
+                                    <li><strong>Pas de données</strong> : Assurez-vous que les noms des onglets dans Google Sheets correspondent (Racks, Equipements, etc.)</li>
+                                    <li><strong>Nouveau déploiement</strong> : Si vous modifiez le Code.gs, créez un <strong>nouveau déploiement</strong> et utilisez la nouvelle URL</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal" id="modal">
+            <div class="modal-header">
+                <h3 id="modalTitle">Modal</h3>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Dynamic form -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="closeModal()">Annuler</button>
+                <button class="btn btn-primary" id="modalSave" onclick="saveModal()">Enregistrer</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Loading -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
