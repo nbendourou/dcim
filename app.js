@@ -6,7 +6,7 @@
 const DCIM = {
     // Configuration
     config: {
-        API_URL: localStorage.getItem('dcim_api_url') || 'https://script.google.com/macros/s/AKfycbycSlsqepE-ciSJXMFrW3f75xHEUwKJ7a8Jy9JkASe03p1JiOaXFLZy9ZqEj3O1V-rH/exec',
+        API_URL: localStorage.getItem('dcim_api_url') || 'https://script.google.com/macros/s/AKfycbzluuP9rd2DX690lqxuuwUTyQSGGVKWAV-iJXkSv_pt3bvg44jJmuhjraJjXJSB_hw/exec',
         RACK_HEIGHT: 47
     },
     
